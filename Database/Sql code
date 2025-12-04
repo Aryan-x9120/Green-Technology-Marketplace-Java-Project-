@@ -1,0 +1,72 @@
+-- ==========================================
+-- GREEN TECH MARKETPLACE - DATABASE SETUP
+-- ==========================================
+
+-- 1. Drop the database if it already exists (starts fresh)
+DROP DATABASE IF EXISTS greentech_db;
+
+-- 2. Create the database
+CREATE DATABASE greentech_db;
+
+-- 3. Select the database to use
+USE greentech_db;
+
+-- ==========================================
+-- TABLE STRUCTURES
+-- ==========================================
+
+-- 4. Create Users Table
+-- Matches your User.java model
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL, -- Values: 'admin', 'customer', 'vendor'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 5. Create Products Table
+-- Matches your Product.java model
+CREATE TABLE products (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    stock INT DEFAULT 10,
+    image_url VARCHAR(255) DEFAULT 'default_product.jpg',
+    vendor_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Foreign Key: Links product to the vendor who added it
+    FOREIGN KEY (vendor_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ==========================================
+-- SAMPLE DATA (SEEDING)
+-- ==========================================
+
+-- 6. Insert Users (1 Admin, 1 Vendor, 1 Customer)
+-- Passwords are plain text for this project level. 
+INSERT INTO users (name, email, password, role) VALUES 
+('System Admin', 'admin@greentech.com', 'admin123', 'admin'),
+('Eco Solutions Ltd', 'vendor@greentech.com', 'vendor123', 'vendor'),
+('Rahul Sharma', 'customer@gmail.com', 'pass123', 'customer');
+
+-- 7. Insert Products (Linked to the Vendor with ID 2)
+INSERT INTO products (name, description, price, stock, image_url, vendor_id) VALUES 
+('Solar Panel 150W', 'High efficiency monocrystalline solar panel.', 5000.00, 20, 'solar_panel.jpg', 2),
+('Bamboo Toothbrush Set', 'Pack of 4 biodegradable toothbrushes.', 250.00, 100, 'toothbrush.jpg', 2),
+('LED Smart Bulb', 'WiFi enabled energy saving bulb 9W.', 450.00, 50, 'led_bulb.jpg', 2),
+('Recycled Paper Notebook', 'A5 size notebook made from 100% recycled paper.', 120.00, 200, 'notebook.jpg', 2);
+
+-- ==========================================
+-- VERIFICATION
+-- ==========================================
+
+-- Show tables to confirm creation
+SHOW TABLES;
+
+-- Select data to confirm insertion
+SELECT * FROM users;
+SELECT * FROM products;
